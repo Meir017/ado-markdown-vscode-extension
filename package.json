@@ -2,7 +2,7 @@
   "name": "ado-markdown",
   "displayName": "ADO Markdown Preview",
   "description": "Renders Azure DevOps shortlink syntax (#work-item, !pull-request) inline in the VS Code markdown preview.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "meblachm",
   "license": "MIT",
   "repository": {
