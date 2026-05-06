@@ -26,11 +26,10 @@ jobs:
 
       - run: npm test
 
-      # Integration tests need an X server to host VS Code.
-      - name: Run VS Code integration tests
-        uses: coactions/setup-xvfb@v1
-        with:
-          run: npm run test:integration
+      # Integration tests are skipped in CI because they require a local
+      # Azure DevOps git checkout to drive auto-detection. Run them locally
+      # via `npm run test:integration` (set ADO_MARKDOWN_TEST_WORKSPACE to
+      # any ADO clone).
 
       - run: npm run package
 

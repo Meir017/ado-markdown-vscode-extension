@@ -78,7 +78,7 @@
     "test": "mocha --config .mocharc.json",
     "pretest:integration": "npm run compile",
     "test:integration": "node ./out/integration-tests/runTest.js",
-    "prepackage": "npm run compile",
+    "prepackage": "npm run compile && node -e \"require('fs').mkdirSync('dist',{recursive:true})\"",
     "package": "vsce package --out ./dist/ado-markdown.vsix --allow-missing-repository",
     "vscode:prepublish": "npm run compile"
   },
