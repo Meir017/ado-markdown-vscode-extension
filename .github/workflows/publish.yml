@@ -10,6 +10,8 @@ on:
       - 'package.json'
       - 'package-lock.json'
       - 'tsconfig.json'
+      - '.github/workflows/publish.yml'
+  workflow_dispatch: {}
 
 concurrency:
   group: publish
@@ -55,13 +57,14 @@ jobs:
       - name: Package extension
         run: npm run package
 
-      - name: Commit and push version bump
+      - name: Commit, tag, and push version bump
         run: |
           git add package.json package-lock.json
           git commit -m "chore: release ${{ steps.bump.outputs.tag }} [skip ci]"
-          git tag "${{ steps.bump.outputs.tag }}"
+          git tag -a "${{ steps.bump.outputs.tag }}" -m "${{ steps.bump.outputs.tag }}"
           git pull --rebase origin main
-          git push origin main --follow-tags
+          git push origin main
+          git push origin "${{ steps.bump.outputs.tag }}"
 
       - name: Create GitHub release
         env:
