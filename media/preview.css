@@ -1,0 +1,112 @@
+.ado-ref {
+  display: inline;
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--vscode-panel-border, rgba(128, 128, 128, 0.35));
+  background: var(--vscode-editorWidget-background, rgba(128, 128, 128, 0.08));
+  text-decoration: none !important;
+  font-size: 0.95em;
+  line-height: 1.6;
+  /* Allow the chip to wrap mid-text across multiple lines (matches ADO previews) */
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  /* Use box-decoration-break so border/background flow nicely across line breaks */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.ado-ref > * {
+  /* Keep icons / id / title / state visually grouped with their neighbour text */
+  vertical-align: -2px;
+}
+
+.ado-ref__id,
+.ado-ref__title,
+.ado-ref__state,
+.ado-ref__text {
+  vertical-align: baseline;
+  /* Discourage breaking inside the id chip itself; allow break between segments */
+  white-space: normal;
+}
+
+.ado-ref__id {
+  white-space: nowrap;
+}
+
+.ado-ref:hover {
+  background: var(--vscode-list-hoverBackground, rgba(128, 128, 128, 0.18));
+}
+
+.ado-ref__icon,
+.ado-ref__kind-icon {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  margin-right: 4px;
+  vertical-align: -3px;
+}
+
+.ado-ref__icon-img {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
+.ado-ref__id {
+  font-family: var(--vscode-editor-font-family, monospace);
+  opacity: 0.85;
+  margin-right: 4px;
+}
+
+.ado-ref__title {
+  font-weight: 500;
+}
+
+.ado-ref__state {
+  font-size: 0.85em;
+  opacity: 0.75;
+  border-left: 1px solid var(--vscode-panel-border, rgba(128, 128, 128, 0.35));
+  padding-left: 6px;
+  margin-left: 6px;
+}
+
+.ado-ref--loading {
+  opacity: 0.75;
+  font-style: italic;
+}
+
+.ado-ref__spinner {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  vertical-align: -1px;
+  margin-right: 4px;
+  opacity: 0.7;
+  animation: ado-ref-spin 0.8s linear infinite;
+}
+
+.ado-ref--loading .ado-ref__text {
+  animation: ado-ref-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes ado-ref-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes ado-ref-pulse {
+  0%, 100% { opacity: 0.6; }
+  50%      { opacity: 1; }
+}
+
+.ado-ref--error {
+  color: var(--vscode-errorForeground, #f48771);
+  border-color: currentColor;
+}
+
+.ado-ref--active   { color: var(--vscode-charts-blue,   #3794ff); }
+.ado-ref--completed{ color: var(--vscode-charts-green,  #89d185); }
+.ado-ref--abandoned{ color: var(--vscode-charts-red,    #f48771); }

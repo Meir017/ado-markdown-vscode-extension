@@ -1,0 +1,106 @@
+{
+  "name": "ado-markdown",
+  "displayName": "ADO Markdown Preview",
+  "description": "Renders Azure DevOps shortlink syntax (#work-item, !pull-request) inline in the VS Code markdown preview.",
+  "version": "0.1.0",
+  "publisher": "meblachm",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Meir017/ado-markdown-vscode-extension.git"
+  },
+  "homepage": "https://github.com/Meir017/ado-markdown-vscode-extension#readme",
+  "bugs": {
+    "url": "https://github.com/Meir017/ado-markdown-vscode-extension/issues"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "markdown",
+    "azure devops",
+    "ado",
+    "preview",
+    "pull request",
+    "work item"
+  ],
+  "main": "./out/extension/index.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "markdown.markdownItPlugins": true,
+    "markdown.previewScripts": [
+      "./out/preview/index.js"
+    ],
+    "markdown.previewStyles": [
+      "./media/preview.css"
+    ],
+    "commands": [
+      {
+        "command": "adoMarkdown.clearCache",
+        "title": "ADO Markdown: Clear Cache"
+      }
+    ],
+    "configuration": {
+      "title": "ADO Markdown Preview",
+      "properties": {
+        "adoMarkdown.organization": {
+          "type": "string",
+          "default": "",
+          "description": "Azure DevOps organization name. When empty, the org is auto-detected from the current workspace's git remote (dev.azure.com or *.visualstudio.com)."
+        },
+        "adoMarkdown.project": {
+          "type": "string",
+          "default": "",
+          "description": "Default Azure DevOps project. When empty, the project is auto-detected from the current workspace's git remote."
+        },
+        "adoMarkdown.cacheTtlSeconds": {
+          "type": "number",
+          "default": 300,
+          "description": "How long to cache resolved work item / pull request data (seconds)."
+        },
+        "adoMarkdown.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable expansion of #work-item and !pr-id shortlinks in markdown preview."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./tsconfig.json && node ./build/build-preview.mjs",
+    "watch": "tsc -p ./tsconfig.json -w",
+    "lint": "eslint src --ext .ts",
+    "test": "mocha --config .mocharc.json",
+    "pretest:integration": "npm run compile",
+    "test:integration": "node ./out/integration-tests/runTest.js",
+    "prepackage": "npm run compile",
+    "package": "vsce package --out ./dist/ado-markdown.vsix --allow-missing-repository",
+    "vscode:prepublish": "npm run compile"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/markdown-it": "^14.1.2",
+    "@types/mocha": "^10.0.7",
+    "@types/node": "^20.14.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^3.9.1",
+    "esbuild": "^0.23.0",
+    "eslint": "^8.57.0",
+    "glob": "^11.1.0",
+    "mocha": "^10.7.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.0"
+  },
+  "dependencies": {
+    "@azure/identity": "^4.13.1",
+    "markdown-it": "^14.1.0"
+  }
+}

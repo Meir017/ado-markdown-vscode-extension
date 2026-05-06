@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run lint
+
+      - run: npm run compile
+
+      - run: npm test
+
+      # Integration tests need an X server to host VS Code.
+      - name: Run VS Code integration tests
+        uses: coactions/setup-xvfb@v1
+        with:
+          run: npm run test:integration
+
+      - run: npm run package
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ado-markdown-vsix
+          path: dist/ado-markdown.vsix
+          if-no-files-found: error
