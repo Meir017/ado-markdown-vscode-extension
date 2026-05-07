@@ -51,12 +51,12 @@
         "adoMarkdown.organization": {
           "type": "string",
           "default": "",
-          "description": "Azure DevOps organization name. When empty, the org is auto-detected from the current workspace's git remote (dev.azure.com or *.visualstudio.com)."
+          "markdownDescription": "Azure DevOps organization name (the segment after `dev.azure.com/`). Set this explicitly to:\n\n- target an Azure DevOps org from a workspace whose git remote isn't on Azure DevOps (e.g. a GitHub clone), or\n- override the org auto-detected from the current workspace's git remote.\n\nWhen empty, the org is auto-detected from `dev.azure.com` or `*.visualstudio.com` remotes. Explicit settings always win over auto-detection."
         },
         "adoMarkdown.project": {
           "type": "string",
           "default": "",
-          "description": "Default Azure DevOps project. When empty, the project is auto-detected from the current workspace's git remote."
+          "markdownDescription": "Default Azure DevOps project. Optional — work-item and pull-request resolution work at the org level. Used only to construct fallback web links while data is loading. When empty, falls back to the project auto-detected from the workspace's git remote (if it matches the active org)."
         },
         "adoMarkdown.cacheTtlSeconds": {
           "type": "number",
