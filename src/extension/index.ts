@@ -6,14 +6,23 @@ import { AzureCliTokenProvider } from '../ado/tokenProvider';
 import { AdoRef } from '../ado/types';
 import { AdoResolver } from '../cache/resolver';
 import { adoRefPlugin } from '../markdownIt/plugin';
+import {
+  ActiveAdoContext,
+  buildFallbackHref,
+  resolveActiveContext,
+} from './activeContext';
 import { CONFIG_SECTION, ExtensionConfig, readConfig } from './config';
 import { AdoWorkspaceContext } from './workspaceContext';
 
 let resolver: AdoResolver | undefined;
 let workspaceCtx: AdoWorkspaceContext | undefined;
 let tokenProvider: AzureCliTokenProvider | undefined;
-let activeOrg = '';
-let activeProject = '';
+let activeContext: ActiveAdoContext = {
+  enabled: false,
+  organization: '',
+  project: '',
+  source: 'none',
+};
 let currentConfig: ExtensionConfig = {
   enabled: false,
   organization: '',
@@ -58,7 +67,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<{
           request: (ref: AdoRef) => resolver?.request(ref) ?? false,
         },
         isEnabled: () => currentConfig.enabled && !!resolver,
-        fallbackHref: (ref: AdoRef) => buildFallbackHref(ref),
+        fallbackHref: (ref: AdoRef) =>
+          buildFallbackHref(ref, {
+            organization: activeContext.organization,
+            project: activeContext.project,
+          }),
       });
     },
   };
@@ -78,43 +91,26 @@ export function deactivate(): void {
  * win over autodetection so users can override.
  */
 function rebuildResolver(): void {
-  if (!currentConfig.enabled || !tokenProvider) {
+  if (!tokenProvider) {
     resolver = undefined;
-    activeOrg = '';
-    activeProject = '';
+    activeContext = { enabled: false, organization: '', project: '', source: 'none' };
     return;
   }
 
   const detected = workspaceCtx?.getAll() ?? [];
-  const detectedOrg = detected[0]?.organization ?? '';
-  const detectedProject = detected[0]?.project ?? '';
+  activeContext = resolveActiveContext(currentConfig, detected);
 
-  const org = currentConfig.organization || detectedOrg;
-  const project = currentConfig.project || detectedProject;
-
-  if (!org) {
-    // No ADO repo open and no override — stay quiet.
+  if (!activeContext.enabled) {
     resolver = undefined;
-    activeOrg = '';
-    activeProject = '';
     return;
   }
 
-  activeOrg = org;
-  activeProject = project;
-  const client = new AdoClient({ organization: org, project }, tokenProvider);
+  const client = new AdoClient(
+    { organization: activeContext.organization, project: activeContext.project },
+    tokenProvider,
+  );
   resolver = new AdoResolver(client, { ttlMs: currentConfig.cacheTtlSeconds * 1000 });
   resolver.onUpdate(() => {
     void vscode.commands.executeCommand('markdown.preview.refresh');
   });
-}
-
-function buildFallbackHref(ref: AdoRef): string {
-  const org = activeOrg || 'dev.azure.com';
-  const project = encodeURIComponent(activeProject || '');
-  const base = `https://dev.azure.com/${encodeURIComponent(org)}/${project}`;
-  if (ref.kind === 'workItem') {
-    return `${base}/_workitems/edit/${ref.id}`;
-  }
-  return `${base}/_git/_pullrequest/${ref.id}`;
 }

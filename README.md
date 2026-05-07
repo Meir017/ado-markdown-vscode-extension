@@ -19,16 +19,21 @@ Inspired by [`mjbvz/vscode-markdown-mermaid`](https://github.com/mjbvz/vscode-ma
 
 ## Activation
 
-The extension only **acts** when the open VS Code workspace contains a git
-repository whose remote points at Azure DevOps (`dev.azure.com/{org}/...` or
-`{org}.visualstudio.com/...`, including the SSH variants). The detected
-organization/project are used to resolve `#N` and `!N` automatically — no
-configuration required for the common case.
+The extension activates whenever **either** of the following is true:
 
-You can override autodetection by setting `adoMarkdown.organization` (and
-optionally `adoMarkdown.project`); explicit settings always win. If neither
-autodetection nor settings yield an organization, the plugin stays inactive
-and `#N` / `!N` are left as plain text.
+1. The open VS Code workspace contains a git repository whose remote points
+   at Azure DevOps (`dev.azure.com/{org}/...` or `{org}.visualstudio.com/...`,
+   including the SSH variants). The detected organization/project are used
+   to resolve `#N` and `!N` automatically — no configuration required.
+2. You set `adoMarkdown.organization` (and optionally `adoMarkdown.project`)
+   in your settings. This lets you target Azure DevOps from any workspace
+   — for example a **GitHub clone** that needs to reference the team's ADO
+   work items, or to point at a **different org** than the one detected
+   from the git remote.
+
+Explicit settings always win over auto-detection. If neither yields an
+organization, the plugin stays inactive and `#N` / `!N` are left as plain
+text.
 
 ## Setup
 
